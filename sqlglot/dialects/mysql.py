@@ -702,6 +702,14 @@ class MySQL(Dialect):
 
             return self.expression(exp.SetItem, this=charset, collate=collate, kind="NAMES")
 
+        def _parse_types(self, *args, **kwargs) -> t.Optional[exp.Expression]:
+            dtype = super()._parse_types(*args, **kwargs)
+
+            if dtype and self._match_text_seq("ZEROFILL"):
+                dtype.set("zerofill", True)
+
+            return dtype
+
         def _parse_type(
             self, parse_interval: bool = True, fallback_to_identifier: bool = False
         ) -> t.Optional[exp.Expression]:
@@ -1211,6 +1219,8 @@ class MySQL(Dialect):
             if expression.this in self.UNSIGNED_TYPE_MAPPING:
                 result = f"{result} UNSIGNED"
 
+            if expression.args.get("zerofill"):
+                result = f"{result} ZEROFILL"
             return result
 
         def jsonarraycontains_sql(self, expression: exp.JSONArrayContains) -> str:
