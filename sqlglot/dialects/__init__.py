@@ -69,6 +69,7 @@ DIALECTS = [
     "BigQuery",
     "ClickHouse",
     "Databricks",
+    "Dameng",
     "Doris",
     "Dremio",
     "Drill",
